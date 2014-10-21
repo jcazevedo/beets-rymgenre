@@ -105,7 +105,7 @@ class RymGenrePlugin(BeetsPlugin):
         return self.config['separator'].get(unicode).join(genres)
 
     def commands(self):
-        rymgenre_cmd = ui.Subcommand('rymgenre', help='fetch genres')
+        rymgenre_cmd = ui.Subcommand('rymgenre', help='fetch genres from rateyourmusic.com')
         def rymgenre_func(lib, opts, args):
             for album in lib.albums(ui.decargs(args)):
                 album.genre = self._get_genre(album)
