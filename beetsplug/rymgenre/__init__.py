@@ -92,8 +92,11 @@ class RymGenrePlugin(BeetsPlugin):
 
         return genres
 
+    def _get_best_release(self, albums):
+        return albums[0]
+
     def _get_genre(self, album):
-        release = self._get_albums(album)[0]
+        release = self._get_best_release(self._get_albums(album))
         genres = self._get_genres('http://rateyourmusic.com/' + release['href'])
 
         log.info(u'genres for album {0} - {1}: {2}'.format(
