@@ -62,11 +62,21 @@ class RymGenrePlugin(BeetsPlugin):
             headers = self.headers)
 
         def build_release(release_element):
-            return {
-                'artist': release_element.xpath('.//a[@class="artist"]/text()')[0],
-                'album': release_element.xpath('.//a[@class="searchpage"]/text()')[0],
-                'href': release_element.xpath('.//a[@class="searchpage"]/@href')[0]
-            }
+            release_information = { 'artist': None, 'album': None, 'href': None }
+
+            artist = release_element.xpath('.//a[@class="artist"]/text()')
+            if artist:
+                release_information['artist'] = artist[0]
+
+            album = release_element.xpath('.//a[@class="searchpage"]/text()')
+            if album:
+                release_information['album'] = album[0]
+
+            href = release_element.xpath('.//a[@class="searchpage"]/@href')
+            if href:
+                release_information['href'] = href[0]
+
+            return release_information
 
         return [build_release(release_element) for release_element in
                 html.fromstring(search_results.text).xpath('//tr[@class="infobox"]')]
