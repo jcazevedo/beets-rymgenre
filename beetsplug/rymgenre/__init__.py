@@ -75,33 +75,33 @@ class RymGenrePlugin(BeetsPlugin):
 
     def _get_genres(self, release_url):
         release_page = html.fromstring(requests.get(release_url, headers = self.headers).text)
-        genres = { 'primary': [], 'secondary': [] }
-        genres['primary'] = release_page.xpath('//span[@class="release_pri_genres"]//a[@class="genre"]/text()')
-        genres['secondary'] = release_page.xpath('//span[@class="release_sec_genres"]//a[@class="genre"]/text()')
+        primary_genres = release_page.xpath('//span[@class="release_pri_genres"]//a[@class="genre"]/text()')
+        secondary_genres = release_page.xpath('//span[@class="release_sec_genres"]//a[@class="genre"]/text()')
+
+        level = self.config['level'].as_choice(('primary', 'secondary', 'parent'))
+        genres = set([])
+        if level == 'primary':
+            genres = set(primary_genres)
+        elif level == 'secondary':
+            genres = set(primary_genres + secondary_genres)
+        elif level == 'parent':
+            for genre in primary_genres + secondary_genres:
+                genres.add(genre)
+                if genre in self.parent_genres:
+                    genres |= set(self.parent_genres[genre])
+
         return genres
 
     def _get_genre(self, album):
         release = self._get_albums(album)[0]
         genres = self._get_genres('http://rateyourmusic.com/' + release['href'])
 
-        level = self.config['level'].as_choice(('primary', 'secondary', 'parent'))
-        final_genres = set([])
-        if level == 'primary':
-            final_genres = set(genres['primary'])
-        elif level == 'secondary':
-            final_genres = set(genres['primary'] + genres['secondary'])
-        elif level == 'parent':
-            for genre in genres['primary'] + genres['secondary']:
-                final_genres.add(genre)
-                if genre in self.parent_genres:
-                    final_genres |= set(self.parent_genres[genre])
-
         log.info(u'genres for album {0} - {1}: {2}'.format(
             album.albumartist,
             album.album,
-            self.config['separator'].get(unicode).join(final_genres)))
+            self.config['separator'].get(unicode).join(genres)))
 
-        return self.config['separator'].get(unicode).join(final_genres)
+        return self.config['separator'].get(unicode).join(genres)
 
     def commands(self):
         rymgenre_cmd = ui.Subcommand('rymgenre', help='fetch genres')
