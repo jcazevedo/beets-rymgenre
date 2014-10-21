@@ -24,6 +24,14 @@ class RymGenrePlugin(BeetsPlugin):
 
     def __init__(self):
         super(RymGenrePlugin, self).__init__()
+
+        self.config.add({
+            'separator': u', ',
+            'level': 'parent',
+            'force': True,
+            'auto': True
+        })
+
         self.setup()
 
     def setup(self):
@@ -78,9 +86,12 @@ class RymGenrePlugin(BeetsPlugin):
             if genre in self.parent_genres:
                 genres_with_parents |= set(self.parent_genres[genre])
 
-        log.info(u'genres for album {0} - {1}: {2}'.format(album.albumartist, album.album, ", ".join(genres_with_parents)))
+        log.info(u'genres for album {0} - {1}: {2}'.format(
+            album.albumartist,
+            album.album,
+            self.config['separator'].get(unicode).join(genres_with_parents)))
 
-        return ", ".join(genres_with_parents)
+        return self.config['separator'].get(unicode).join(genres_with_parents)
 
     def commands(self):
         rymgenre_cmd = ui.Subcommand('rymgenre', help='fetch genres')
