@@ -45,6 +45,10 @@ class RymGenrePlugin(BeetsPlugin):
                     build_parents(sub, path, parents)
             else:
                 parents[elem] = path
+                if elem in parents:
+                    parents[elem] += path
+                else:
+                    parents[elem] = path
 
         self.parent_genres = {}
         build_parents(yaml.load(open(GENRES_TREE, 'r')), [], self.parent_genres)
