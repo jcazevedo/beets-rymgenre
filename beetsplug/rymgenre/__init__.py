@@ -27,9 +27,7 @@ class RymGenrePlugin(BeetsPlugin):
 
         self.config.add({
             'separator': u', ',
-            'level': 'parent',
-            'force': True,
-            'auto': True
+            'level': 'parent'
         })
 
         self.setup()
