@@ -137,6 +137,7 @@ class RymGenrePlugin(BeetsPlugin):
                 for item in album.items():
                     item.genre = genres
                     item.store()
+                    item.try_write()
 
         rymgenre_cmd.func = rymgenre_func
         return [rymgenre_cmd]
