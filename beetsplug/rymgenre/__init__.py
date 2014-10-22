@@ -129,6 +129,8 @@ class RymGenrePlugin(BeetsPlugin):
     def commands(self):
         rymgenre_cmd = ui.Subcommand('rymgenre', help='fetch genres from rateyourmusic.com')
         def rymgenre_func(lib, opts, args):
+            write = config['import']['write'].get(bool)
+
             for album in lib.albums(ui.decargs(args)):
                 genres = self._get_genre(album)
                 album.genre = genres
@@ -137,7 +139,9 @@ class RymGenrePlugin(BeetsPlugin):
                 for item in album.items():
                     item.genre = genres
                     item.store()
-                    item.try_write()
+
+                    if write:
+                        item.try_write()
 
         rymgenre_cmd.func = rymgenre_func
         return [rymgenre_cmd]
