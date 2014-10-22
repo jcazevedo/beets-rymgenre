@@ -101,10 +101,11 @@ class RymGenrePlugin(BeetsPlugin):
 
         return genres
 
-    def _get_best_release(self, albums):
+    def _get_best_release(self, albums, beets_album):
         # TODO improve this
         id = 1
-        print("Candidates:")
+        print("Candidates for {0} - {1} ({2}):".format(
+            beets_album.albumartist, beets_album.album, beets_album.year))
         for album in albums:
             print(str(id) + ". " + album['artist'] + " - " + album['album'])
             id += 1
@@ -115,7 +116,7 @@ class RymGenrePlugin(BeetsPlugin):
         return albums[res - 1]
 
     def _get_genre(self, album):
-        release = self._get_best_release(self._get_albums(album))
+        release = self._get_best_release(self._get_albums(album), album)
         genres = self._get_genres(release['href'])
 
         log.info(u'genres for album {0} - {1}: {2}'.format(
