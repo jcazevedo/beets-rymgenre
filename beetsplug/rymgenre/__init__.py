@@ -39,16 +39,13 @@ class RymGenrePlugin(BeetsPlugin):
 
             if isinstance(elem, dict):
                 for (k, v) in elem.items():
+                    parents[k] = parents.get(k, set([])) | set(path)
                     build_parents(v, [k] + path, parents)
             elif isinstance(elem, list):
                 for sub in elem:
                     build_parents(sub, path, parents)
             else:
-                parents[elem] = path
-                if elem in parents:
-                    parents[elem] += path
-                else:
-                    parents[elem] = path
+                parents[elem] = parents.get(elem, set([])) | set(path)
 
         self.parent_genres = {}
         build_parents(yaml.load(open(GENRES_TREE, 'r')), [], self.parent_genres)
