@@ -4,6 +4,7 @@ import requests
 import yaml
 
 from beets.plugins import BeetsPlugin
+from beets import config
 from beets import ui
 from lxml import html
 
