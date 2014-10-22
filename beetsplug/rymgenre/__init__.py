@@ -63,7 +63,7 @@ class RymGenrePlugin(BeetsPlugin):
             headers = self.headers)
 
         def build_release(release_element):
-            release_information = { 'artist': None, 'album': None, 'href': None }
+            release_information = { 'artist': 'Various Artists', 'album': None, 'href': None }
 
             artist = release_element.xpath('.//a[@class="artist"]/text()')
             if artist:
@@ -75,7 +75,7 @@ class RymGenrePlugin(BeetsPlugin):
 
             href = release_element.xpath('.//a[@class="searchpage"]/@href')
             if href:
-                release_information['href'] = href[0]
+                release_information['href'] = 'http://rateyourmusic.com/' + href[0]
 
             return release_information
 
@@ -94,7 +94,7 @@ class RymGenrePlugin(BeetsPlugin):
         elif level == 'secondary':
             genres = set(primary_genres + secondary_genres)
         elif level == 'parent':
-            for genre in primary_genres + secondary_genres:
+            for genre in (primary_genres + secondary_genres):
                 genres.add(genre)
                 if genre in self.parent_genres:
                     genres |= set(self.parent_genres[genre])
@@ -102,11 +102,21 @@ class RymGenrePlugin(BeetsPlugin):
         return genres
 
     def _get_best_release(self, albums):
-        return albums[0]
+        # TODO improve this
+        id = 1
+        print("Candidates:")
+        for album in albums:
+            print(str(id) + ". " + album['artist'] + " - " + album['album'])
+            id += 1
+        res = ui.input_options(['Set url'], numrange=(1, len(albums) + 1))
+        if res == 's':
+            url = ui.input_('Enter rateyourmusic url:')
+            return { 'href': url }
+        return albums[res - 1]
 
     def _get_genre(self, album):
         release = self._get_best_release(self._get_albums(album))
-        genres = self._get_genres('http://rateyourmusic.com/' + release['href'])
+        genres = self._get_genres(release['href'])
 
         log.info(u'genres for album {0} - {1}: {2}'.format(
             album.albumartist,
