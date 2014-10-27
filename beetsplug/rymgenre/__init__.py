@@ -65,18 +65,17 @@ class RymGenrePlugin(BeetsPlugin):
 
         def build_release(release_element):
             release_information = { 'artist': 'Various Artists', 'album': None, 'href': None }
+            def set_element(obj, key, html_element, xpath):
+                elem = html_element.xpath(xpath)
+                if elem:
+                    obj[key] = elem[0]
 
-            artist = release_element.xpath('.//a[@class="artist"]/text()')
-            if artist:
-                release_information['artist'] = artist[0]
+            set_element(release_information, 'artist', release_element, './/a[@class="artist"]/text()')
+            set_element(release_information, 'album', release_element, './/a[@class="searchpage"]/text()')
+            set_element(release_information, 'href', release_element, './/a[@class="searchpage"]/@href')
 
-            album = release_element.xpath('.//a[@class="searchpage"]/text()')
-            if album:
-                release_information['album'] = album[0]
-
-            href = release_element.xpath('.//a[@class="searchpage"]/@href')
-            if href:
-                release_information['href'] = 'http://rateyourmusic.com/' + href[0]
+            if release_information['href']:
+                release_information['href'] = 'http://rateyourmusic.com/' + release_information['href']
 
             return release_information
 
