@@ -64,18 +64,38 @@ class RymGenrePlugin(BeetsPlugin):
             headers = self.headers)
 
         def build_release(release_element):
-            release_information = { 'artist': 'Various Artists', 'album': None, 'href': None }
-            def set_element(obj, key, html_element, xpath):
-                elem = html_element.xpath(xpath)
-                if elem:
-                    obj[key] = elem[0]
+            release_information = {
+                'artist': None,
+                'album': None,
+                'href': None,
+                'year': None,
+                'format': None,
+                'label': None
+            }
 
-            set_element(release_information, 'artist', release_element, './/a[@class="artist"]/text()')
-            set_element(release_information, 'album', release_element, './/a[@class="searchpage"]/text()')
-            set_element(release_information, 'href', release_element, './/a[@class="searchpage"]/@href')
+            artist = release_element.xpath('.//td[2]//td[1]/a[@class="artist"]/text()')
+            if artist:
+                release_information['artist'] = artist[0]
 
-            if release_information['href']:
-                release_information['href'] = 'http://rateyourmusic.com/' + release_information['href']
+            album = release_element.xpath('.//a[@class="searchpage"]/text()')
+            if album:
+                release_information['album'] = album[0]
+
+            href = release_element.xpath('.//a[@class="searchpage"]/@href')
+            if href:
+                release_information['href'] = 'http://rateyourmusic.com/' + href[0]
+
+            label = release_element.xpath('.//a[@class="label"]/text()')
+            if label:
+                release_information['label'] = label[0]
+
+            year = release_element.xpath('.//td[@style="width:4em;"]/text()')
+            if year:
+                release_information['year'] = year[0]
+
+            fmt = release_element.xpath('.//td[@style="width:5em;"]/text()')
+            if fmt:
+                release_information['format'] = fmt[0].strip()
 
             return release_information
 
@@ -102,29 +122,42 @@ class RymGenrePlugin(BeetsPlugin):
         return genres
 
     def _get_best_release(self, albums, beets_album):
-        # TODO improve this
+        def value_or_na(value):
+            return value if value is not None else 'N/A'
+
         id = 1
-        print("Candidates for {0} - {1} ({2}):".format(
+        print(u'Candidates for {0} - {1} ({2}):'.format(
             beets_album.albumartist, beets_album.album, beets_album.year))
         for album in albums:
-            print(str(id) + ". " + album['artist'] + " - " + album['album'])
+            print(u'{0}. {1} - {2} ({3}, {4}, {5})'.format(
+                id,
+                value_or_na(album['artist']),
+                value_or_na(album['album']),
+                value_or_na(album['format']),
+                value_or_na(album['label']),
+                value_or_na(album['year'])))
             id += 1
-        res = ui.input_options(['Set url'], numrange=(1, len(albums) + 1))
+        res = ui.input_options(['set url', 'skip'], numrange=(1, len(albums) + 1))
         if res == 's':
             url = ui.input_('Enter rateyourmusic url:')
             return { 'href': url }
+        elif res == 'k':
+            return None
+
         return albums[res - 1]
 
     def _get_genre(self, album):
         release = self._get_best_release(self._get_albums(album), album)
-        genres = self._get_genres(release['href'])
+        if release:
+            genres = self._get_genres(release['href'])
 
-        log.info(u'genres for album {0} - {1}: {2}'.format(
-            album.albumartist,
-            album.album,
-            self.config['separator'].get(unicode).join(genres)))
+            log.info(u'genres for album {0} - {1}: {2}'.format(
+                album.albumartist,
+                album.album,
+                self.config['separator'].get(unicode).join(genres)))
 
-        return self.config['separator'].get(unicode).join(genres)
+            return self.config['separator'].get(unicode).join(genres)
+        return None
 
     def commands(self):
         rymgenre_cmd = ui.Subcommand('rymgenre', help='fetch genres from rateyourmusic.com')
