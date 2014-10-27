@@ -133,15 +133,16 @@ class RymGenrePlugin(BeetsPlugin):
 
             for album in lib.albums(ui.decargs(args)):
                 genres = self._get_genre(album)
-                album.genre = genres
-                album.store()
+                if genres:
+                    album.genre = genres
+                    album.store()
 
-                for item in album.items():
-                    item.genre = genres
-                    item.store()
+                    for item in album.items():
+                        item.genre = genres
+                        item.store()
 
-                    if write:
-                        item.try_write()
+                        if write:
+                            item.try_write()
 
         rymgenre_cmd.func = rymgenre_func
         return [rymgenre_cmd]
