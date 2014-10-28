@@ -13,8 +13,8 @@ $ pip install lxml requests
 ```
 
 After having [lxml][lxml] and [requests][requests] installed, edit your config
-file and add the path to a clone of this repository to your
-[pluginpath][beets-pluginpath] line. Also enable the plugin by adding the
+file and add the path to the `beetsplug` folder of a clone of this repository to
+your [pluginpath][beets-pluginpath] line. Also enable the plugin by adding the
 `rymgenre` value to your `plugins` line.
 
 ## Configuration
