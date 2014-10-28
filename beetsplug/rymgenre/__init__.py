@@ -125,26 +125,41 @@ class RymGenrePlugin(BeetsPlugin):
         def value_or_na(value):
             return value if value is not None else 'N/A'
 
-        id = 1
-        print(u'Candidates for {0} - {1} ({2}):'.format(
-            beets_album.albumartist, beets_album.album, beets_album.year))
-        for album in albums:
-            print(u'{0}. {1} - {2} ({3}, {4}, {5})'.format(
-                id,
+        def format_rym_album(album):
+            return u'{0} - {1} ({2}, {3}, {4})'.format(
                 value_or_na(album['artist']),
                 value_or_na(album['album']),
                 value_or_na(album['format']),
                 value_or_na(album['label']),
-                value_or_na(album['year'])))
-            id += 1
-        res = ui.input_options(['set url', 'skip'], numrange=(1, len(albums) + 1))
-        if res == 's':
+                value_or_na(album['year']))
+
+        def set_url():
             url = ui.input_('Enter rateyourmusic url:')
             return { 'href': url }
+
+        print(u'Best candidate for {0} - {1} ({2}):'.format(
+            beets_album.albumartist, beets_album.album, beets_album.year))
+        print(format_rym_album(albums[0]))
+        res = ui.input_options(['apply', 'more candidates', 'set url', 'skip'])
+        if res == 'a':
+            return albums[0]
+        elif res == 's':
+            return set_url()
         elif res == 'k':
             return None
-
-        return albums[res - 1]
+        else:
+            id = 1
+            print(u'Candidates for {0} - {1} ({2}):'.format(
+                beets_album.albumartist, beets_album.album, beets_album.year))
+            for album in albums:
+                print(str(id) + u'. ' + format_rym_album(album))
+                id += 1
+            res = ui.input_options(['set url', 'skip'], numrange=(1, len(albums) + 1))
+            if res == 's':
+                return set_url()
+            elif res == 'k':
+                return None
+            return albums[res - 1]
 
     def _get_genre(self, album):
         release = self._get_best_release(self._get_albums(album), album)
