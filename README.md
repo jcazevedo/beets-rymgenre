@@ -46,7 +46,9 @@ rymgenre:
 
 `beets-rymgenre` doesn't run automatically on import. Instead, one should use
 the command `beet rymgenre [QUERY]` to fetch genres for albums matching a
-certain query.
+certain query. The genre import requires user confirmation and can be overriden
+by selecting a different alternative or by specifying a [rateyourmusic.com][rym]
+URL.
 
 ## Thanks
 
