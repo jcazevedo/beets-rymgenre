@@ -83,7 +83,7 @@ class RymGenrePlugin(BeetsPlugin):
 
             href = release_element.xpath('.//a[@class="searchpage"]/@href')
             if href:
-                release_information['href'] = 'http://rateyourmusic.com/' + href[0]
+                release_information['href'] = 'http://rateyourmusic.com' + href[0]
 
             label = release_element.xpath('.//a[@class="label"]/text()')
             if label:
