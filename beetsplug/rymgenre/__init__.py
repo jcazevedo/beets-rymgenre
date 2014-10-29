@@ -137,7 +137,7 @@ class RymGenrePlugin(BeetsPlugin):
             url = ui.input_('Enter rateyourmusic url:')
             return { 'href': url }
 
-        print(u'Fetching genre for album:\n    {0} - {1}'.format(
+        print(u'\nFetching genre for album:\n    {0} - {1}'.format(
             beets_album.albumartist, beets_album.album))
 
         print(u'URL:\n    %s' % albums[0]['href'])
