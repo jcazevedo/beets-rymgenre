@@ -157,7 +157,7 @@ class RymGenrePlugin(BeetsPlugin):
             for album in albums:
                 print(str(id) + u'. ' + format_rym_album(album))
                 id += 1
-            res = ui.input_options(['set url', 'skip'], numrange=(1, len(albums) + 1))
+            res = ui.input_options(['set url', 'skip'], numrange=(1, len(albums)))
             if res == 's':
                 return set_url()
             elif res == 'k':
