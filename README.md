@@ -20,17 +20,19 @@ your [pluginpath][beets-pluginpath] line. Also enable the plugin by adding the
 ## Configuration
 
 [rateyourmusic.com][rym] attributes genres per album. Each album has a set of
-primary genres and a set of secondary genres. There is also a [tree][rym-tree]
-of genres. You can configure the plugin to set (1) only the primary genres of an
-album, (2) both the primary and secondary genres or (3) the union of ancestor
-genres for each primary and secondary genre. The default configuration is the
-latter, but you can override it by using the `level` configuration value. The
-`level` configuration value can have one of three possible values: `primary`,
-`secondary` or `parent`:
+primary genres and a set of secondary genres. You can configure the plugin to
+set only the primary genres of an album or both the primary and secondary
+genres. There is also a [tree][rym-tree] of genres and you can set only the most
+specific genres for an album or the union of ancestor genres for each genre. The
+default configuration is setting all primary and secondary genres and their
+ancestors. You can override both settings by using the `classes` and `depth`
+configuration values. The `classes` configuration can be either `primary` or
+`all`, while `depth` can be either `node` or `all`:
 
 ```
 rymgenre:
-    level: parent
+    classes: all
+    depth: all
 ```
 
 It is also possible to configure the separator to use for multiple genres. The

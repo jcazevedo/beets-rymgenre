@@ -6,6 +6,7 @@ import yaml
 from beets.plugins import BeetsPlugin
 from beets import config
 from beets import ui
+from collections import defaultdict
 from lxml import html
 
 log = logging.getLogger('beets')
@@ -28,7 +29,8 @@ class RymGenrePlugin(BeetsPlugin):
 
         self.config.add({
             'separator': u', ',
-            'level': 'parent'
+            'classes': 'all',
+            'depth': 'all'
         })
 
         self.setup()
@@ -48,7 +50,7 @@ class RymGenrePlugin(BeetsPlugin):
             else:
                 parents[elem] = parents.get(elem, set([])) | set(path)
 
-        self.parent_genres = {}
+        self.parent_genres = defaultdict(list)
         build_parents(yaml.load(open(GENRES_TREE, 'r')), [], self.parent_genres)
 
     def _get_albums(self, album):
@@ -107,17 +109,16 @@ class RymGenrePlugin(BeetsPlugin):
         primary_genres = release_page.xpath('//span[@class="release_pri_genres"]//a[@class="genre"]/text()')
         secondary_genres = release_page.xpath('//span[@class="release_sec_genres"]//a[@class="genre"]/text()')
 
-        level = self.config['level'].as_choice(('primary', 'secondary', 'parent'))
-        genres = set([])
-        if level == 'primary':
-            genres = set(primary_genres)
-        elif level == 'secondary':
-            genres = set(primary_genres + secondary_genres)
-        elif level == 'parent':
-            for genre in (primary_genres + secondary_genres):
-                genres.add(genre)
-                if genre in self.parent_genres:
-                    genres |= set(self.parent_genres[genre])
+        classes = self.config['classes'].as_choice(('primary', 'all'))
+        depth = self.config['depth'].as_choice(('node', 'all'))
+
+        genres = set(primary_genres)
+        if classes == 'all':
+            genres |= set(secondary_genres)
+
+        if depth == 'all':
+            for genre in list(genres):
+                genres |= set(self.parent_genres[genre])
 
         return genres
 
