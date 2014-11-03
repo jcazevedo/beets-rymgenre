@@ -26,8 +26,8 @@ genres. There is also a [tree][rym-tree] of genres and you can set only the most
 specific genres for an album or the union of ancestor genres for each genre. The
 default configuration is setting all primary and secondary genres and their
 ancestors. You can override both settings by using the `classes` and `depth`
-configuration values. The `classes` configuration canbe either `primary` or
-`all`, while `depth` can be either `leaf` or `all`:
+configuration values. The `classes` configuration can be either `primary` or
+`all`, while `depth` can be either `node` or `all`:
 
 ```
 rymgenre:

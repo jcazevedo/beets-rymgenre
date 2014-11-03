@@ -110,7 +110,7 @@ class RymGenrePlugin(BeetsPlugin):
         secondary_genres = release_page.xpath('//span[@class="release_sec_genres"]//a[@class="genre"]/text()')
 
         classes = self.config['classes'].as_choice(('primary', 'all'))
-        depth = self.config['depth'].as_choice(('leaf', 'all'))
+        depth = self.config['depth'].as_choice(('node', 'all'))
 
         genres = set(primary_genres)
         if classes == 'all':
