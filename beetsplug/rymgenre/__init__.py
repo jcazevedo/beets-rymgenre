@@ -42,15 +42,15 @@ class RymGenrePlugin(BeetsPlugin):
 
             if isinstance(elem, dict):
                 for (k, v) in elem.items():
-                    parents[k] = parents.get(k, set([])) | set(path)
+                    parents[k] |= set(path)
                     build_parents(v, [k] + path, parents)
             elif isinstance(elem, list):
                 for sub in elem:
                     build_parents(sub, path, parents)
             else:
-                parents[elem] = parents.get(elem, set([])) | set(path)
+                parents[elem] |= set(path)
 
-        self.parent_genres = defaultdict(list)
+        self.parent_genres = defaultdict(set)
         build_parents(yaml.load(open(GENRES_TREE, 'r')), [], self.parent_genres)
 
     def _get_albums(self, album):
@@ -118,7 +118,7 @@ class RymGenrePlugin(BeetsPlugin):
 
         if depth == 'all':
             for genre in list(genres):
-                genres |= set(self.parent_genres[genre])
+                genres |= self.parent_genres[genre]
 
         return genres
 
