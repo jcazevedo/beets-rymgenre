@@ -3,6 +3,22 @@
 `beets-rymgenre` is a [beets][beets] plugin to fetch genre information from
 [rateyourmusic.com][rym] and assigning it to your albums and items.
 
+## WARNING
+
+I don't recommend using this plugin! I got banned from rateyourmusic.com in
+mid-2016 for an abusive use of the site by using this plugin. The answer I got
+from Hossein Sharifi pointed out to scraping being disallowed by
+rateyourmusic.com:
+
+> RYM does not allow (and has never allowed) access via scraping or other types
+> of scripts which access the site in an automated fashion. Please refrain from
+> doing so until we complete our API, which is currently being developed and
+> should be part of Sonemic.
+
+The API
+is [currently being developed](https://rateyourmusic.com/rymzilla/view?id=683)
+and I might get back to this project when it is published.
+
 ## Installation
 
 The plugin requires [lxml][lxml] and [requests][requests], which you can install
